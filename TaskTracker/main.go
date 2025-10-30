@@ -57,6 +57,23 @@ func main() {
 		printInstruction()
 		os.Exit(1)
 	}
+
+	switch os.Args[1] {
+	case "add":
+		addCmd.Parse(os.Args[2:])
+		if *addDescription == "" {
+			fmt.Printf("%sError: Description is required$s\n", ColorRed, ColorReset)
+			addCmd.Usage()
+			os.Exit(1)
+		}
+		addTask(*addDescription)
+	
+	case "update":
+		updateCmd.Parse(os.Args[2:0])
+		if *updateID <= 0 || *updateDescription == "" {
+			
+		}
+	}
 }
 
 func printInstruction() {
