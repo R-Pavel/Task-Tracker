@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -20,5 +22,59 @@ type Task struct {
 	Status string `json: "status"`
 	CreatedAt time.Time `json: "createdAt"`
 	UpdatedAt time.Time `json: "UpdatedAt"`
+}
+
+type Tasks []Task
+
+const (
+	fileName = "tasks.json"
+	statusTodo = "todo"
+	statusInProgress = "in-progress"
+	statusDone = "done"
+)
+
+func main() {
+	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
+	updateCmd := flag.NewFlagSet("update", flag.ExitOnError)
+	deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
+	markInProgressCmd := flag.NewFlagSet("mark-in-progress", flag.ExitOnError)
+	markDoneCmd := flag.NewFlagSet("mark-done", flag.ExitOnError)
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+
+	addDescription := addCmd.String("description", "", "Task description")
+
+	updateID := updateCmd.Int("id", 0, "Task ID")
+	updateDescription := updateCmd.String("description", "", "New task description")
+
+	deleteID := deleteCmd.Int("id", 0, "Task ID")
+
+	markInProgressID := markInProgressCmd.Int("id", 0, "Task ID")
+	markDoneID := markDoneCmd.Int("id", 0, "Task ID")
+
+	listStatus := listCmd.String("status", "", "Filter by status: todo, in-progress, done")
+
+	if len(os.Args) < 2 {
+		printInstruction()
+		os.Exit(1)
+	}
+}
+
+func printInstruction() {
+	fmt.Println(` Usage: task-cli <command> [arguments]
+	Commands:
+		add "description" 					Add a new task
+		update <id> "new description"		Update a task
+		delete <id> 						Delete a task
+		mark-in-progress <id> 				Mark task as in progress
+		mark-done <id>						Mark task as done
+		list [status]						List tasks(optional: todo, in-progress, done)
+
+	Examples:
+		task-cli add "Buy groceries"
+		task-cli update 1 "Buy groceries and cook"
+		task-cli delete 1
+		task-cll mark-in-progress 1
+		task-cli mark-done 1
+	`)
 }
 
